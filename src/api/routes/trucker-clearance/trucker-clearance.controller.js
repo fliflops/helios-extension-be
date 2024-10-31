@@ -39,28 +39,38 @@ exports.submitTrip = async(req,res,next) => {
         const {trip_no, plate_no, vehicle_type, trucker} = req.body;
         const id = req.processor.id
 
-        console.log(id)
-
         const trip = await service.getTrip(trip_no)
         if(!trip) return res.status(400).json({message: 'Invalid trip number.'})
         if(trip.tripStatus !== 'DISPATCH_CONFIRMED') return res.status(400).json({message: 'Invalid Trip Status'})
         const getBr = await service.getBr(trip_no)
 
+        const getVehicle = await service.getVehicleLocation({
+            vehicle_id: plate_no,
+            trucker_id: trucker,
+            location: trip.locationCode
+        })
+
+        console.log(getVehicle)
+
+    
         const brValidation = getBr.find(item => item.brStatus !== 'VERIFIED_COMPLETE' || item.rudStatus !== 'CLEARED')
+        const locationValidation = getVehicle.length > 0;
+
+        if(!locationValidation) return res.status(400).json({message: 'Invalid Vehicle Location'})
         
         if(brValidation) return res.status(400).json({message: 'Please clear the remaining uncleared invoices'})
 
-        await service.updateTrip({
-            data:{
-                cleared_by:             id,
-                date_cleared:           moment().format('YYYY-MM-DD HH:mm:ss'),
-                tripStatus:             'TRUCKER_CLEARED',
-                actual_vendor:          trucker,
-                actual_vehicle_id:      plate_no,
-                actual_vehicle_type:    vehicle_type
-            },
-            trip_no
-        })
+        // await service.updateTrip({
+        //     data:{
+        //         cleared_by:             id,
+        //         date_cleared:           moment().format('YYYY-MM-DD HH:mm:ss'),
+        //         tripStatus:             'TRUCKER_CLEARED',
+        //         actual_vendor:          trucker,
+        //         actual_vehicle_id:      plate_no,
+        //         actual_vehicle_type:    vehicle_type
+        //     },
+        //     trip_no
+        // })
 
         res.end()
     }

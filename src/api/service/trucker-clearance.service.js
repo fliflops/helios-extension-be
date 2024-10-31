@@ -27,6 +27,35 @@ exports.getVehicle = async({
     )
 }
 
+exports.getVehicleLocation = async({
+    vehicle_id,
+    trucker_id,
+    location
+}) => {
+    return await kronosModel.sequelize.query(`
+        Select 
+        b.vehicle_id,
+        c.code,
+        d.trucker_id
+        from vehicle_location a
+        left join vehicle b on a.vehicle_id = b.id
+        left join location c on a.location_id = c.id
+        left join trucker d on b.trucker_id = d.id
+        where b.status = 'ACTIVE'
+        and b.vehicle_id = :vehicle_id 
+        and d.trucker_id = :trucker_id
+        and c.code       = :location
+    `,{
+        replacements: {
+            vehicle_id,
+            trucker_id,
+            location
+        },
+        type: Sequelize.QueryTypes.SELECT
+    })
+    .then(result => JSON.parse(JSON.stringify(result)))
+}
+
 exports.getTrip = async(trip_no) => {
     return await heliosModel.trip_plan_hdr_tbl.findOne({
         where:{

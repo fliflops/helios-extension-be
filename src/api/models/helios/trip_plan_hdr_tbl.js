@@ -10,6 +10,7 @@ class trip_plan_hdr_tbl extends Model {
             actual_vendor: DataTypes.STRING,
             actual_vehicle_id: DataTypes.STRING,
             actual_vehicle_type: DataTypes.STRING,
+            locationCode: DataTypes.STRING,
             cleared_by:  DataTypes.STRING,       
             date_cleared: DataTypes.STRING,      
             tripStatus:   DataTypes.STRING      
