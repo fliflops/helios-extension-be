@@ -8,11 +8,12 @@ exports.login = async(req,res,next) => {
     try{
         const {email, password} = req.body;
         const user = await userService.getUser({
-            email
+            email,
+            status: 'AC'
         });
 
         if(!user) return res.status(400).json({messsage: error});
-        if(user.status !== 'AC')  return res.status(400).json({messsage: error});
+        //if(user.status !== 'AC')  return res.status(400).json({messsage: error});
 
         const passwordMatch = await userService.validateAuth({
             password,
