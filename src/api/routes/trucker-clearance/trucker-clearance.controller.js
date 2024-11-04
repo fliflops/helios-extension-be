@@ -60,17 +60,17 @@ exports.submitTrip = async(req,res,next) => {
         
         if(brValidation) return res.status(400).json({message: 'Please clear the remaining uncleared invoices'})
 
-        // await service.updateTrip({
-        //     data:{
-        //         cleared_by:             id,
-        //         date_cleared:           moment().format('YYYY-MM-DD HH:mm:ss'),
-        //         tripStatus:             'TRUCKER_CLEARED',
-        //         actual_vendor:          trucker,
-        //         actual_vehicle_id:      plate_no,
-        //         actual_vehicle_type:    vehicle_type
-        //     },
-        //     trip_no
-        // })
+        await service.updateTrip({
+            data:{
+                cleared_by:             id,
+                date_cleared:           moment().format('YYYY-MM-DD HH:mm:ss'),
+                tripStatus:             'TRUCKER_CLEARED',
+                actual_vendor:          trucker,
+                actual_vehicle_id:      plate_no,
+                actual_vehicle_type:    vehicle_type
+            },
+            trip_no
+        })
 
         res.end()
     }
