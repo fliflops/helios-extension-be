@@ -11,6 +11,4 @@ router.route('/select')
 router.route('/trucker')
 .get(authorize,controller.getTruckers)
 
-
-
 module.exports = router;

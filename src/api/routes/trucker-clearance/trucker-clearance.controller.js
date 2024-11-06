@@ -40,8 +40,11 @@ exports.submitTrip = async(req,res,next) => {
         const id = req.processor.id
 
         const trip = await service.getTrip(trip_no)
-        if(!trip) return res.status(400).json({message: 'Invalid trip number.'})
-        if(trip.tripStatus !== 'DISPATCH_CONFIRMED') return res.status(400).json({message: 'Invalid Trip Status'})
+        if(!trip)                                       return res.status(400).json({message: 'Invalid trip number.'})
+        if(trip.tripStatus === 'TRUCKER_CLEARED')       return res.status(400).json({message: 'Invalid Trip Status: Trucker Cleared'})
+        if(trip.tripStatus === 'SHORT_CLOSED')          return res.status(400).json({message: 'Invalid Trip Status: Short Closed'})
+        if(trip.tripStatus !== 'DISPATCH_CONFIRMED')    return res.status(400).json({message: 'Invalid Trip Status'})
+    
         const getBr = await service.getBr(trip_no)
 
         const getVehicle = await service.getVehicleLocation({
@@ -50,9 +53,6 @@ exports.submitTrip = async(req,res,next) => {
             location: trip.locationCode
         })
 
-        console.log(getVehicle)
-
-    
         const brValidation = getBr.find(item => item.brStatus !== 'VERIFIED_COMPLETE' || item.rudStatus !== 'CLEARED')
         const locationValidation = getVehicle.length > 0;
 
