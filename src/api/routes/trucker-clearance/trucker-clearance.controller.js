@@ -56,7 +56,7 @@ exports.submitTrip = async(req,res,next) => {
         const brValidation = getBr.find(item => item.brStatus !== 'VERIFIED_COMPLETE' || item.rudStatus !== 'CLEARED')
         const locationValidation = getVehicle.length > 0;
 
-        if(!locationValidation) return res.status(400).json({message: 'Invalid Vehicle Location'})
+        if(!locationValidation) return res.status(400).json({message: 'Location mismatch between Plate Number and Trip Number. Please notify fleet team to verify and update'})
         
         if(brValidation) return res.status(400).json({message: 'Please clear the remaining uncleared invoices'})
 
